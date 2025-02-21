@@ -79,7 +79,7 @@ if uploaded_files:
             if file_ext == ".csv":
                 df = pd.read_csv(file)
             elif file_ext == ".xlsx":
-                df = pd.read_excel(file, engine="openxlsx")
+                df = pd.read_excel(file, engine="openpyxl")
             else:
                 st.error(f"Unsupported file type: {file_ext}")
                 continue
