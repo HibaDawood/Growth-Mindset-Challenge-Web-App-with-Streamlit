@@ -4,12 +4,10 @@ import pandas as pd
 import os
 from io import BytesIO
 
-
 # 📌 Set up Streamlit App
 st.set_page_config(page_title="💿 Data Sweeper", layout="wide")
 st.title("💿 Data Sweeper")
 st.write("Transform your files between CSV and Excel with built-in data cleaning and visualization!")
-
 
 # 📌 Custom CSS for Styling
 st.markdown(
@@ -74,6 +72,11 @@ if uploaded_files:
     for file in uploaded_files:
         file_ext = os.path.splitext(file.name)[-1].lower()
 
+        # 📌 Check File Size
+        if file.size > 200 * 1024 * 1024:  # 200MB limit
+            st.error(f"File size exceeds 200MB limit: {file.name}. Please upload a smaller file.")
+            continue
+
         # 📌 Read the Uploaded File
         try:
             if file_ext == ".csv":
@@ -84,7 +87,7 @@ if uploaded_files:
                 st.error(f"Unsupported file type: {file_ext}")
                 continue
         except Exception as e:
-            st.error(f"Error reading file: {e}")
+            st.error(f"Error reading file: {e}. Please ensure the file is valid.")
             continue
 
         # 📌 Display File Info
@@ -142,11 +145,11 @@ if uploaded_files:
                     mime_type = "text/csv"
 
                 elif conversion_type == "Excel":
-                    df.to_excel(buffer, index=False, engine="openpyxl")  # ✅ FIXED
+                    df.to_excel(buffer, index=False, engine="openpyxl")
                     file_name = file.name.replace(file_ext, ".xlsx")
                     mime_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
-                buffer.seek(0)  # ✅ FIXED
+                buffer.seek(0)
 
                 # 📌 Download Button
                 st.download_button(
@@ -159,4 +162,3 @@ if uploaded_files:
                 st.error(f"Error during file conversion: {e}")
 
         st.success("🎉🎊 All files processed successfully!")
-
